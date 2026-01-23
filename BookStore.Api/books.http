@@ -1,0 +1,15 @@
+GET http://localhost:5204/books
+
+###
+GET http://localhost:5204/books/4
+
+###
+POST http://localhost:5204/books
+Content-Type: application/json
+
+{
+  "name": "The 48 Laws of Power",
+  "author": "Robert Greene",
+  "price": 24.00,
+  "releaseDate": "1998-09-01"
+}
