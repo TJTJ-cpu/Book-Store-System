@@ -29,6 +29,8 @@ public static class BookEndPoints
         // POST /book
         group.MapPost("/", (CreateBookDto newBook) =>
         {
+            if (string.IsNullOrEmpty(newBook.Name))
+                return Results.BadRequest("Name is Empty");
             BookDto book = new (
                 books.Count + 1,
                 newBook.Name,
