@@ -49,6 +49,12 @@ app.MapPut("/books/{id}", (int id, UpdateBookDto updatedBook) =>
     return Results.NoContent();
 });
 
+// DELETE /books/id
+app.MapDelete("/books/{id}", (int id) =>
+{
+    books.RemoveAll(book => book.Id == id);
 
+    return Results.NoContent();
+});
 
 app.Run();

@@ -24,3 +24,7 @@ Content-Type: application/json
   "price": 22.99,
   "releaseDate": "2016-09-13"
 }
+
+###
+DELETE http://localhost:5204/books/1
+
