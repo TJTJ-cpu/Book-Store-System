@@ -26,3 +26,4 @@ C:\Users\TJ\github\Book-Store-System\BookStore.Api\obj\Debug\net10.0\refint\Book
 C:\Users\TJ\github\Book-Store-System\BookStore.Api\obj\Debug\net10.0\BookStore.Api.pdb
 C:\Users\TJ\github\Book-Store-System\BookStore.Api\obj\Debug\net10.0\BookStore.Api.genruntimeconfig.cache
 C:\Users\TJ\github\Book-Store-System\BookStore.Api\obj\Debug\net10.0\ref\BookStore.Api.dll
+C:\Users\TJ\github\Book-Store-System\BookStore.Api\obj\Debug\net10.0\BookStore.Api.sourcelink.json

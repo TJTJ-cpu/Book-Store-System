@@ -13,3 +13,14 @@ Content-Type: application/json
   "price": 24.00,
   "releaseDate": "1998-09-01"
 }
+
+###
+PUT http://localhost:5204/books/1
+Content-Type: application/json
+
+{
+  "name": "The Subtle Art of Not Giving a F*ck",
+  "author": "Mark Manson",
+  "price": 22.99,
+  "releaseDate": "2016-09-13"
+}

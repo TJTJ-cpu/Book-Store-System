@@ -34,4 +34,21 @@ app.MapPost("/books", (CreateBookDto newBook) =>
     return Results.CreatedAtRoute(GetEndPointBook, new {id = book.Id}, book);
 });
 
+// PUT /books/id
+app.MapPut("/books/{id}", (int id, UpdateBookDto updatedBook) =>
+{
+    var index = books.FindIndex(book => book.Id == id);
+
+    books[index] = new BookDto(
+        id,
+        updatedBook.Name,
+        updatedBook.Author,
+        updatedBook.Price,
+        updatedBook.ReleaseDate
+    );
+    return Results.NoContent();
+});
+
+
+
 app.Run();
