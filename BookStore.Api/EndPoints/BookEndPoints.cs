@@ -64,6 +64,10 @@ public static class BookEndPoints
         // DELETE /books/id
         group.MapDelete("/{id}", (int id) =>
         {
+            var index = books.FindIndex(book => book.Id == id);
+            if (index == -1)
+                return Results.NotFound();
+
             books.RemoveAll(book => book.Id == id);
 
             return Results.NoContent();

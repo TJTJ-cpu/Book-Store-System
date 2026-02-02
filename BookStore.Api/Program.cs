@@ -9,7 +9,6 @@ builder.Services.AddValidation();
 
 var app = builder.Build();
 
-
 app.MapBookEndPoints();
 
 app.Run();
