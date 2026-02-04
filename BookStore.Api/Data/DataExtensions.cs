@@ -19,8 +19,8 @@ public static class DataExtensions
 
     public static void AddBookStoreDb(this WebApplicationBuilder builder)
     {
-        var conString = "Data Source=BookStore.db";
-
+        var conString = builder.Configuration.GetConnectionString("BookStore");
+        builder.Services.AddScoped<BookStoreContext>();
         builder.Services.AddSqlite<BookStoreContext>(
             conString, 
             optionsAction: options => options.UseSeeding((context, _) =>

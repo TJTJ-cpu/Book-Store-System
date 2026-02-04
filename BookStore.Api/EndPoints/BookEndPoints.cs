@@ -1,4 +1,7 @@
+using BookStore.Api.Data;
+using BookStore.Api.DetailDtos;
 using BookStore.Api.Dtos;
+using BookStore.Api.Models;
 
 namespace BookStore.Api.EndPoints;
 
@@ -27,20 +30,31 @@ public static class BookEndPoints
         }).WithName(GetEndPointBook);
 
         // POST /book
-        group.MapPost("/", (CreateBookDto newBook) =>
+        group.MapPost("/", (CreateBookDto newBook, BookStoreContext dbContext) =>
         {
             if (string.IsNullOrEmpty(newBook.Name))
                 return Results.BadRequest("Name is Empty");
-            BookDto book = new (
-                books.Count + 1,
-                newBook.Name,
-                newBook.Author,
-                newBook.Price,
-                newBook.ReleaseDate
+
+            Book book = new()
+            {
+                Name = newBook.Name,
+                AuthorId = newBook.AuthorId,
+                Price = newBook.Price,
+                ReleaseDate = newBook.ReleaseDate
+            };
+
+            dbContext.Books.Add(book);
+            dbContext.SaveChanges();
+
+            BookDetailsDto bookDto = new(
+                book.Id,
+                book.Name,
+                book.AuthorId,
+                book.Price,
+                book.ReleaseDate
             );
 
-            books.Add(book);
-            return Results.CreatedAtRoute(GetEndPointBook, new {id = book.Id}, book);
+            return Results.CreatedAtRoute(GetEndPointBook, new {id = bookDto.Id}, bookDto);
         });
 
         // PUT /books/id
