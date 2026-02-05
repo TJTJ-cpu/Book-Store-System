@@ -1,6 +1,6 @@
 namespace BookStore.Api.Dtos;
 
-public record BookDto(
+public record BookSummaryDto(
     int Id,
     string Name,
     string Author,

@@ -1,30 +1,30 @@
 GET http://localhost:5204/books
 
 ###
-GET http://localhost:5204/books/4
+GET http://localhost:5204/books/7
 
 ###
 POST http://localhost:5204/books
 Content-Type: application/json
 
 {
-  "name": "The 48 Laws of Power",
+  "name": "The 48 Laws of Power this is a test",
   "authorid": 1,
   "price": 24.00,
   "releaseDate": "1998-09-01"
 }
 
 ###
-PUT http://localhost:5204/books/1
+PUT http://localhost:5204/books/9
 Content-Type: application/json
 
 {
-  "name": "The Subtle Art of Not Giving a F*ck",
-  "authorId": 1,
-  "price": 22.99,
-  "releaseDate": "2016-09-13"
+  "name": "The Subtle Art of Not Giving a F*ck 23",
+  "authorId": 3,
+  "price": 12.99,
+  "releaseDate": "2026-02-14"
 }
 
 ###
-DELETE http://localhost:5204/books/1
+DELETE http://localhost:5204/books/8
 

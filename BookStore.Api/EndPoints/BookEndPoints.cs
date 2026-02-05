@@ -2,13 +2,14 @@ using BookStore.Api.Data;
 using BookStore.Api.DetailDtos;
 using BookStore.Api.Dtos;
 using BookStore.Api.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookStore.Api.EndPoints;
 
 public static class BookEndPoints
 {
     const string GetEndPointBook = "GetBookRoute";
-    private static readonly List<BookDto> books = [
+    private static readonly List<BookSummaryDto> books = [
         new (1, "Meditations", "Marcus Aurelius", 9.99M, new DateOnly(1558, 01, 01)),
         new (2, "1984", "George Orwell", 11.99M, new DateOnly(1949, 06, 08)),
         new (3, "Sunrise on the Reaping", "Suzanne Collins", 27.99M, new DateOnly(2025, 03, 18)),
@@ -19,18 +20,37 @@ public static class BookEndPoints
         var group = app.MapGroup("/books");
 
         // GET /book
-        group.MapGet("/", () => books);
+        group.MapGet("/",async (BookStoreContext dbContext) 
+            => await dbContext.Books
+                .Include(book => book.Author)
+                .Select(book => new BookSummaryDto(
+                    book.Id,
+                    book.Name,
+                    book.Author!.Name,
+                    book.Price,
+                    book.ReleaseDate
+            ))
+        .AsNoTracking()
+        .ToListAsync());
 
         // GET /books/id
-        group.MapGet("/{id}", (int id) =>
+        group.MapGet("/{id}", async (int id, BookStoreContext dbContext) =>
         {
-            var book = books.Find(book => book.Id == id);
+            var book = await dbContext.Books.FindAsync(id);
 
-            return book is null ? Results.NotFound() : Results.Ok(book);
+            return book is null ? Results.NotFound() : Results.Ok(
+                new BookDetailsDto(
+                    book.Id,
+                    book.Name,
+                    book.AuthorId,
+                    book.Price,
+                    book.ReleaseDate
+                )
+            );
         }).WithName(GetEndPointBook);
 
         // POST /book
-        group.MapPost("/", (CreateBookDto newBook, BookStoreContext dbContext) =>
+        group.MapPost("/",async (CreateBookDto newBook, BookStoreContext dbContext) =>
         {
             if (string.IsNullOrEmpty(newBook.Name))
                 return Results.BadRequest("Name is Empty");
@@ -44,7 +64,7 @@ public static class BookEndPoints
             };
 
             dbContext.Books.Add(book);
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
 
             BookDetailsDto bookDto = new(
                 book.Id,
@@ -58,31 +78,28 @@ public static class BookEndPoints
         });
 
         // PUT /books/id
-        group.MapPut("/{id}", (int id, UpdateBookDto updatedBook) =>
+        group.MapPut("/{id}", async (int id, UpdateBookDto updatedBook, BookStoreContext dbContext) =>
         {
-            var index = books.FindIndex(book => book.Id == id);
+            var existingBook = await dbContext.Books.FindAsync(id);
 
-            if (index == -1)
+            if (existingBook is null)
                 Results.NotFound();
 
-            books[index] = new BookDto(
-                id,
-                updatedBook.Name,
-                updatedBook.Author,
-                updatedBook.Price,
-                updatedBook.ReleaseDate
-            );
+            existingBook.Name = updatedBook.Name;
+            existingBook.AuthorId = updatedBook.AuthorId;
+            existingBook.Price = updatedBook.Price;
+            existingBook.ReleaseDate = updatedBook.ReleaseDate;
+
+            await dbContext.SaveChangesAsync();
+
             return Results.NoContent();
         });
 
         // DELETE /books/id
-        group.MapDelete("/{id}", (int id) =>
+        group.MapDelete("/{id}", async (int id, BookStoreContext dbContext) =>
         {
-            var index = books.FindIndex(book => book.Id == id);
-            if (index == -1)
-                return Results.NotFound();
+            await dbContext.Books.Where(book => book.Id == id).ExecuteDeleteAsync();
 
-            books.RemoveAll(book => book.Id == id);
 
             return Results.NoContent();
         });
