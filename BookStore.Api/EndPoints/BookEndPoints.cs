@@ -104,21 +104,15 @@ public static class BookEndPoints
             return Results.NoContent();
         });
 
-        // GET /book
-        group.MapDelete("/",async (BookStoreContext dbContext) 
+        // DELETE /books (Wipe the entire database table)
+        group.MapDelete("/", async (BookStoreContext dbContext) =>
+        {
+            await dbContext.Books.ExecuteDeleteAsync();
 
-            => await dbContext.Books
-                .Include(book => book.Author)
-                .Select(book => new BookSummaryDto(
-                    book.Id,
-                    book.Name,
-                    book.Author!.Name,
-                    book.Price,
-                    book.ReleaseDate
-            ))
-        .AsNoTracking()
-        .ToListAsync()
-        );
+            await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM sqlite_sequence WHERE name='Books'");
+
+            return Results.NoContent();
+        });
        
     }
 
