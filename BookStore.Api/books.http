@@ -28,3 +28,6 @@ Content-Type: application/json
 ###
 DELETE http://localhost:5204/books/8
 
+###
+GET http://localhost:5204/author
+

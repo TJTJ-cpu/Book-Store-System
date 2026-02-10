@@ -11,6 +11,8 @@ var app = builder.Build();
 
 app.MapBookEndPoints();
 
+app.MapAuthorEndPoints();
+
 app.MigrateDb();
 
 app.Run();

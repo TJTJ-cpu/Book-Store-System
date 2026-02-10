@@ -80,15 +80,16 @@ public static class BookEndPoints
         // PUT /books/id
         group.MapPut("/{id}", async (int id, UpdateBookDto updatedBook, BookStoreContext dbContext) =>
         {
-            var existingBook = await dbContext.Books.FindAsync(id);
+           var existingBook = await dbContext.Books.FindAsync(id);
 
             if (existingBook is null)
-                Results.NotFound();
+                return Results.NotFound();
 
             existingBook.Name = updatedBook.Name;
             existingBook.AuthorId = updatedBook.AuthorId;
             existingBook.Price = updatedBook.Price;
             existingBook.ReleaseDate = updatedBook.ReleaseDate;
+
 
             await dbContext.SaveChangesAsync();
 
@@ -100,10 +101,25 @@ public static class BookEndPoints
         {
             await dbContext.Books.Where(book => book.Id == id).ExecuteDeleteAsync();
 
-
             return Results.NoContent();
         });
 
+        // GET /book
+        group.MapDelete("/",async (BookStoreContext dbContext) 
+
+            => await dbContext.Books
+                .Include(book => book.Author)
+                .Select(book => new BookSummaryDto(
+                    book.Id,
+                    book.Name,
+                    book.Author!.Name,
+                    book.Price,
+                    book.ReleaseDate
+            ))
+        .AsNoTracking()
+        .ToListAsync()
+        );
+       
     }
 
 }
