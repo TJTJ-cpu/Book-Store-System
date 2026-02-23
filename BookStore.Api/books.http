@@ -7,6 +7,9 @@ GET http://localhost:5204/books/7
 GET http://localhost:5204/author
 
 ###
+POST http://localhost:5204/books/random
+
+###
 POST http://localhost:5204/books
 Content-Type: application/json
 

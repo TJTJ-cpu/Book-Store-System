@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+using System.Threading.Tasks.Dataflow;
 using BookStore.Api.Data;
 using BookStore.Api.DetailDtos;
 using BookStore.Api.Dtos;
@@ -48,6 +50,40 @@ public static class BookEndPoints
                 )
             );
         }).WithName(GetEndPointBook);
+
+        // POST /random book
+        group.MapPost("/random", async (BookStoreContext dbContext) =>
+        {
+            var jsonSting = await File.ReadAllTextAsync("Data/books.json");
+            var books = System.Text.Json.JsonSerializer.Deserialize<List<CreateBookDto>>(jsonSting);
+
+            if (books is null || books.Count == 0)
+                return Results.Ok("Nothing here homie");
+
+            var random = new Random();
+            var randomBook = books[random.Next(books.Count)];
+
+            Book book = new()
+            {
+                Name = randomBook.Name,
+                AuthorId = randomBook.AuthorId,
+                Price = randomBook.Price,
+                ReleaseDate = randomBook.ReleaseDate,
+            };
+            dbContext.Books.Add(book);
+            await dbContext.SaveChangesAsync();
+
+            BookDetailsDto bookDetail = new(
+                book.Id,
+                book.Name,
+                book.AuthorId,
+                book.Price,
+                book.ReleaseDate
+            );
+
+            return Results.CreatedAtRoute(GetEndPointBook, new {id = bookDetail.Id}, bookDetail);
+
+        });
 
         // POST /book
         group.MapPost("/",async (CreateBookDto newBook, BookStoreContext dbContext) =>
