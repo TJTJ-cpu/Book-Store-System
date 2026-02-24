@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-using System.Threading.Tasks.Dataflow;
 using BookStore.Api.Data;
 using BookStore.Api.DetailDtos;
 using BookStore.Api.Dtos;
@@ -54,14 +52,19 @@ public static class BookEndPoints
         // POST /random book
         group.MapPost("/random", async (BookStoreContext dbContext) =>
         {
+            // temp
             var jsonSting = await File.ReadAllTextAsync("Data/books.json");
             var books = System.Text.Json.JsonSerializer.Deserialize<List<CreateBookDto>>(jsonSting);
 
             if (books is null || books.Count == 0)
-                return Results.Ok("Nothing here homie");
+                return Results.Ok("Book list is empty!");
 
             var random = new Random();
             var randomBook = books[random.Next(books.Count)];
+
+            var existedBook = await dbContext.Books.AnyAsync(b => b.Name == randomBook.Name);
+            if (existedBook)
+                return Results.Conflict($"The book: {randomBook.Name} is already in the list!");
 
             Book book = new()
             {
@@ -140,16 +143,6 @@ public static class BookEndPoints
             return Results.NoContent();
         });
 
-        // DELETE /books (Wipe the entire database table)
-        group.MapDelete("/", async (BookStoreContext dbContext) =>
-        {
-            await dbContext.Books.ExecuteDeleteAsync();
-
-            await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM sqlite_sequence WHERE name='Books'");
-
-            return Results.NoContent();
-        });
-       
     }
 
 }
