@@ -10,6 +10,14 @@ GET http://localhost:5204/author
 POST http://localhost:5204/books/random
 
 ###
+POST http://localhost:5204/author
+Content-Type: application/json
+
+{
+  "name": "Mark Manson"
+}
+
+###
 POST http://localhost:5204/books
 Content-Type: application/json
 
@@ -33,6 +41,9 @@ Content-Type: application/json
 
 ###
 DELETE http://localhost:5204/books/2
+
+###
+DELETE http://localhost:5204/author/2
 
 ###
 DELETE http://localhost:5204/books
