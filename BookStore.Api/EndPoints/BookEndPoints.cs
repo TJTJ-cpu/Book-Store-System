@@ -38,7 +38,7 @@ public static class BookEndPoints
         {
             var book = await dbContext.Books.FindAsync(id);
 
-            return book is null ? Results.NotFound() : Results.Ok(
+            return book is null ? Results.NotFound($"The Book with ID: {id} is not found.") : Results.Ok(
                 new BookDetailsDto(
                     book.Id,
                     book.Name,
@@ -49,50 +49,15 @@ public static class BookEndPoints
             );
         }).WithName(GetEndPointBook);
 
-        // POST /random book
-        group.MapPost("/random", async (BookStoreContext dbContext) =>
-        {
-            // temp
-            var jsonSting = await File.ReadAllTextAsync("Data/books.json");
-            var books = System.Text.Json.JsonSerializer.Deserialize<List<CreateBookDto>>(jsonSting);
-
-            if (books is null || books.Count == 0)
-                return Results.Ok("Book list is empty!");
-
-            var random = new Random();
-            var randomBook = books[random.Next(books.Count)];
-
-            var existedBook = await dbContext.Books.AnyAsync(b => b.Name == randomBook.Name);
-            if (existedBook)
-                return Results.Conflict($"The book: {randomBook.Name} is already in the list!");
-
-            Book book = new()
-            {
-                Name = randomBook.Name,
-                AuthorId = randomBook.AuthorId,
-                Price = randomBook.Price,
-                ReleaseDate = randomBook.ReleaseDate,
-            };
-            dbContext.Books.Add(book);
-            await dbContext.SaveChangesAsync();
-
-            BookDetailsDto bookDetail = new(
-                book.Id,
-                book.Name,
-                book.AuthorId,
-                book.Price,
-                book.ReleaseDate
-            );
-
-            return Results.CreatedAtRoute(GetEndPointBook, new {id = bookDetail.Id}, bookDetail);
-
-        });
-
         // POST /book
         group.MapPost("/",async (CreateBookDto newBook, BookStoreContext dbContext) =>
         {
             if (string.IsNullOrEmpty(newBook.Name))
                 return Results.BadRequest("Name is Empty");
+
+            var authorExist = await dbContext.Authors.AnyAsync(a => a.Id == newBook.AuthorId);
+            if (!authorExist)
+                return Results.BadRequest($"Cannot create book: The Author ID {newBook.AuthorId} does not exist.");
 
             Book book = new()
             {

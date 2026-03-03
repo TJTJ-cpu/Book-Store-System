@@ -1,20 +1,17 @@
 GET http://localhost:5204/books
 
 ###
-GET http://localhost:5204/books/7
+GET http://localhost:5204/books/4
 
 ###
 GET http://localhost:5204/author
-
-###
-POST http://localhost:5204/books/random
 
 ###
 POST http://localhost:5204/author
 Content-Type: application/json
 
 {
-  "name": "Robert Greene"
+  "name": "Mark Manson"
 }
 
 ###
@@ -23,7 +20,7 @@ Content-Type: application/json
 
 {
   "name": "The 48 Laws of Power this is a test",
-  "authorid": 2,
+  "authorid": 3,
   "price": 24.00,
   "releaseDate": "1998-09-01"
 }
@@ -44,9 +41,6 @@ DELETE http://localhost:5204/books/2
 
 ###
 DELETE http://localhost:5204/author/5
-
-###
-DELETE http://localhost:5204/books
 
 ###
 DELETE http://localhost:5204/author/wipe
