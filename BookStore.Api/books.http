@@ -14,7 +14,7 @@ POST http://localhost:5204/author
 Content-Type: application/json
 
 {
-  "name": "Mark Manson"
+  "name": "Robert Greene"
 }
 
 ###
@@ -23,18 +23,18 @@ Content-Type: application/json
 
 {
   "name": "The 48 Laws of Power this is a test",
-  "authorid": 1,
+  "authorid": 2,
   "price": 24.00,
   "releaseDate": "1998-09-01"
 }
 
 ###
-PUT http://localhost:5204/books/1
+PUT http://localhost:5204/books/2
 Content-Type: application/json
 
 {
-  "name": "The Subtle Art of Not Giving a F*ck 23",
-  "authorId": 3,
+  "name": "The Subtle Art of Not Giving a F*ck",
+  "authorId":1,
   "price": 12.99,
   "releaseDate": "2026-02-14"
 }
@@ -43,8 +43,11 @@ Content-Type: application/json
 DELETE http://localhost:5204/books/2
 
 ###
-DELETE http://localhost:5204/author/2
+DELETE http://localhost:5204/author/5
 
 ###
 DELETE http://localhost:5204/books
+
+###
+DELETE http://localhost:5204/author/wipe
 

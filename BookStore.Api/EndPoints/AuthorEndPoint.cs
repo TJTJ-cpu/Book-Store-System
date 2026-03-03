@@ -52,5 +52,13 @@ public static class AuthorEndPoints
                         
             return Results.Ok(new AuthorDto(author.Id, author.Name));
         });
+
+        // DELETE /author/wipe (Temporary endpoint to reset the database)
+        group.MapDelete("/wipe", async (BookStoreContext dbContext) =>
+        {
+            await dbContext.Database.ExecuteSqlRawAsync("TRUNCATE TABLE \"Authors\" RESTART IDENTITY CASCADE;");
+            
+            return Results.NoContent();
+        });
     }
 }

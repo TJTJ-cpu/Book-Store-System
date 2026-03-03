@@ -119,10 +119,14 @@ public static class BookEndPoints
         // PUT /books/id
         group.MapPut("/{id}", async (int id, UpdateBookDto updatedBook, BookStoreContext dbContext) =>
         {
-           var existingBook = await dbContext.Books.FindAsync(id);
+            var existingBook = await dbContext.Books.FindAsync(id);
+            var authorExist = await dbContext.Authors.AnyAsync(a => a.Id == updatedBook.AuthorId);
 
             if (existingBook is null)
-                return Results.NotFound();
+                return Results.NotFound($"The book with ID: {id} is not found.");
+
+            if (!authorExist)
+                return Results.BadRequest($"The Authod ID: {updatedBook.AuthorId} is not found.");
 
             existingBook.Name = updatedBook.Name;
             existingBook.AuthorId = updatedBook.AuthorId;
