@@ -5,30 +5,33 @@ namespace BookStore.Frontend.Clients;
 
 public class BookClient
 {
-    private readonly HttpClient _httpClient;
+    private readonly HttpClient mHttpClient;
 
     public BookClient(HttpClient httpClient)
     {
-        _httpClient = httpClient;
+        mHttpClient = httpClient;
     }
 
     public async Task<BookSummaryDto[]> GetBooksAsync()
     {
-        var books = await _httpClient.GetFromJsonAsync<BookSummaryDto[]>("books");
+        var books = await mHttpClient.GetFromJsonAsync<BookSummaryDto[]>("books");
         
         return books ?? []; 
     }
 
     // Add book func
-    public async Task AddBookAsync(CreateBookDto newBook)
+    public async Task<string?> AddBookAsync(CreateBookDto newBook)
     {
-        await _httpClient.PostAsJsonAsync("books", newBook);
+        var respnse = await mHttpClient.PostAsJsonAsync("books", newBook);
+        if (!respnse.IsSuccessStatusCode)
+            return await respnse.Content.ReadAsStringAsync();
+        return null;
     }
 
     // Delete book fun
     public async Task DeleteBookAsync(int id)
     {
-        await _httpClient.DeleteAsync($"books/{id}");
+        await mHttpClient.DeleteAsync($"books/{id}");
     }
 
 }

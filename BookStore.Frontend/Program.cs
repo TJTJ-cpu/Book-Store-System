@@ -9,6 +9,10 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
+builder.Services.AddHttpClient<AuthorClient>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5204");
+});
 builder.Services.AddHttpClient<BookClient>(client =>
 {
     client.BaseAddress = new Uri("http://localhost:5204");

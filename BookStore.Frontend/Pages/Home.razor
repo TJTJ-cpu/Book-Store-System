@@ -28,8 +28,13 @@
         <InputDate @bind-Value="newBook.ReleaseDate" />
     </div>
     <button type="submit">Add Book</button>
+
 </EditForm>
 
+@if (errMessage is not null)
+{
+    <p style="color:red">@errMessage</p>
+}
 
 @if (books is null){
     <p><em>Loading your books....</em></p>
@@ -69,17 +74,20 @@ else{
 
 @code{
     private BookSummaryDto[]? books;
+    private CreateBookDto newBook = new(){ReleaseDate = new DateOnly(2000, 1, 1)};
+    private string? errMessage;
 
     protected override async Task OnInitializedAsync(){
         books = await Clients.GetBooksAsync();
     }
-    private CreateBookDto newBook = new();
 
     private async Task HandleAddBook()
     {
-        await Clients.AddBookAsync(newBook);
-        books = await Clients.GetBooksAsync(); // refresh the list
-        newBook = new();
+        errMessage =  await Clients.AddBookAsync(newBook);
+        if (errMessage is null){
+            books = await Clients.GetBooksAsync();
+            newBook = new();
+        }
     }
 
     private async Task HandleDeleteBook(int id){
