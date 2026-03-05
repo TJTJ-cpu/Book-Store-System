@@ -18,4 +18,17 @@ public class BookClient
         
         return books ?? []; 
     }
+
+    // Add book func
+    public async Task AddBookAsync(CreateBookDto newBook)
+    {
+        await _httpClient.PostAsJsonAsync("books", newBook);
+    }
+
+    // Delete book fun
+    public async Task DeleteBookAsync(int id)
+    {
+        await _httpClient.DeleteAsync($"books/{id}");
+    }
+
 }

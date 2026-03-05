@@ -7,6 +7,30 @@
 
 <h1>📚 My Book Store</h1>
 
+
+<h4>Add a Book</h4>
+<EditForm Model="newBook" OnValidSubmit="HandleAddBook">
+    <DataAnnotationsValidator />
+    <div>
+        <label>Title</label>
+        <InputText @bind-Value="newBook.Name" />
+    </div>
+    <div>
+        <label>Author ID</label>
+        <InputNumber @bind-Value="newBook.AuthorId" />
+    </div>
+    <div>
+        <label>Price</label
+        <InputNumber @bind-Value="newBook.Price" />
+    </div>
+    <div>
+        <label>Release Date</label>
+        <InputDate @bind-Value="newBook.ReleaseDate" />
+    </div>
+    <button type="submit">Add Book</button>
+</EditForm>
+
+
 @if (books is null){
     <p><em>Loading your books....</em></p>
 }
@@ -22,6 +46,7 @@ else{
                 <th>Author</th>
                 <th>Price</th>
                 <th>Release Date</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -33,6 +58,9 @@ else{
                     <td>@book.Author</td>
                     <td>$@book.Price</td>
                     <td>@book.ReleaseDate.ToString("MMMM dd, yyyy")</td>
+                    <td>
+                        <button @onclick="() => HandleDeleteBook(book.Id)">Delete</button>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -43,6 +71,19 @@ else{
     private BookSummaryDto[]? books;
 
     protected override async Task OnInitializedAsync(){
+        books = await Clients.GetBooksAsync();
+    }
+    private CreateBookDto newBook = new();
+
+    private async Task HandleAddBook()
+    {
+        await Clients.AddBookAsync(newBook);
+        books = await Clients.GetBooksAsync(); // refresh the list
+        newBook = new();
+    }
+
+    private async Task HandleDeleteBook(int id){
+        await Clients.DeleteBookAsync(id);
         books = await Clients.GetBooksAsync();
     }
 }

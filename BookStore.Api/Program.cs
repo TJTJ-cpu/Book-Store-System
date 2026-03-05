@@ -10,10 +10,23 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<BookStoreContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("BookStoreDb")));
 
+
 // old sqlLite system
 // builder.AddBookStoreDb();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("http://localhost:5100")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
+
+app.UseCors();
 
 app.MapBookEndPoints();
 
