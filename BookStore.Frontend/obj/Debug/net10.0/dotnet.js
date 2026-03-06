@@ -5,7 +5,7 @@ var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,
   "mainAssemblyName": "BookStore.Frontend",
   "applicationEnvironment": "Development",
   "resources": {
-    "hash": "sha256-wQroekhLuMHgOIou4mNb0ZOpaFXL1HRkqybDUTG47Pk=",
+    "hash": "sha256-VG9zxUlDBji+CYY9K8mBiBgLqP2N7YwQOviBpatKtJw=",
     "jsModuleNative": [
       {
         "name": "dotnet.native.69poregybn.js"
@@ -1248,16 +1248,16 @@ var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,
       },
       {
         "virtualPath": "BookStore.Frontend.wasm",
-        "name": "BookStore.Frontend.akd2reyaic.wasm",
-        "integrity": "sha256-KkR7Z3Zad3lydQfQhNf1gyWpJXnpinFeBIksxbvAPrI=",
+        "name": "BookStore.Frontend.u4gd6dmatk.wasm",
+        "integrity": "sha256-EnMbuhJBDnHnQJTsZYJCJQLDfOCbxSAe1Rhh3/4Xc3I=",
         "cache": "force-cache"
       }
     ],
     "pdb": [
       {
         "virtualPath": "BookStore.Frontend.pdb",
-        "name": "BookStore.Frontend.eke55g9xpr.pdb",
-        "integrity": "sha256-/g3Bfz8bz/Ybf1sjC4P49sJFzEHqe7CZSJlceJWosTI=",
+        "name": "BookStore.Frontend.os2mlijbxt.pdb",
+        "integrity": "sha256-qGRZnn4B2x9NyEhKttMYo1FiuQv/v44YVLAf+qY0oqI=",
         "cache": "force-cache"
       }
     ],
