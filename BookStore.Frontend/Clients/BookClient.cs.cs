@@ -44,6 +44,14 @@ public class BookClient
         return null;
     }
 
+    public async Task<string?> UpdateBookAsync(int id, UpdateBookDto updatedBook)
+    {
+        var response = await mHttpClient.PutAsJsonAsync($"books/{id}", updatedBook);
+        if (!response.IsSuccessStatusCode)
+            return await response.Content.ReadAsStringAsync();
+        return null;
+    }
+
     public async Task DeleteBookAsync(int id)
     {
         await mHttpClient.DeleteAsync($"books/{id}");

@@ -43,6 +43,29 @@
     <p style="color:red">@errMessage</p>
 }
 
+@if (editingBook is not null)
+{
+    <h4>Edit: @editingBook.Name</h4>
+    <EditForm Model="editBook" OnValidSubmit="HandleEditBook">
+        <DataAnnotationsValidator />
+        <div><label>Title</label><InputText @bind-Value="editBook.Name" /></div>
+        <div>
+            <label>Author</label>
+            <InputSelect @bind-Value="editBook.AuthorId" class="form-control" style="width: 230px">
+                <option value="0">-- Select Author --</option>
+                @foreach (var author in authors ?? [])
+                {
+                    <option value="@author.Id">@author.Name</option>
+                }
+            </InputSelect>
+        </div>
+        <div><label>Price</label><InputNumber @bind-Value="editBook.Price" /></div>
+        <div><label>Release Date</label><InputDate @bind-Value="editBook.ReleaseDate" /></div>
+        <button type="submit" class="btn btn-warning">Save</button>
+        <button type="button" @onclick="() => editingBook = null">Cancel</button>
+    </EditForm>
+}
+
 @if (books is null){
     <p><em>Loading your books....</em></p>
 }
@@ -72,6 +95,7 @@ else{
                     <td>@book.ReleaseDate.ToString("MMMM dd, yyyy")</td>
                     <td>
                         <button @onclick="() => HandleDeleteBook(book.Id)">Delete</button>
+                        <button @onclick="() => StartEdit(book)">Edit</button>
                     </td>
                 </tr>
             }
@@ -83,6 +107,16 @@ else{
     private AuthorDto []? authors;
     private BookSummaryDto[]? books;
     private CreateBookDto newBook = new(){ReleaseDate = new DateOnly(2000, 1, 1)};
+    private BookSummaryDto? editingBook;
+    private UpdateBookDto editBook = new();
+    private void StartEdit(BookSummaryDto book){
+        editingBook = book;
+        editBook = new UpdateBookDto{
+            Name = book.Name,
+            AuthorId = authors?.FirstOrDefault(a => a.Name == book.Author)?.Id ?? 0,
+            Price = book.Price
+        };
+    }
     private string? errMessage;
 
     protected override async Task OnInitializedAsync(){
@@ -103,5 +137,12 @@ else{
     private async Task HandleDeleteBook(int id){
         await Clients.DeleteBookAsync(id);
         books = await Clients.GetBooksAsync();
+    }
+    private async Task HandleEditBook(){
+        errMessage = await Clients.UpdateBookAsync(editingBook!.Id, editBook);
+        if (errMessage is null){
+            books = await Clients.GetBooksAsync();
+            editingBook = null;
+        }
     }
 }
