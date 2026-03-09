@@ -6,3 +6,56 @@
 <PageTitle>Authors</PageTitle>
 
 <h1>Authors</h1>
+
+<EditForm Model="newAuthorName" OnValidSubmit="HandleAddAuthor">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label>Name</label>
+        <InputText @bind-Value="newAuthorName" class="form-control" />
+    </div>
+    @if (errMessage is not null)
+    {
+        <p class="text-danger">@errMessage</p>
+    }
+    <button type="submit" class="btn btn-primary">Add Author</button>
+</EditForm>
+
+@if (authors is null)
+{
+    @* <p>Loading...</p> *@
+    <p>No Authors</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr><th>Id</th><th>Name</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var author in authors)
+            {
+                <tr>
+                    <td>@author.Id</td>
+                    <td>@author.Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    private AuthorDto[]? authors;
+    private string newAuthorName = "";
+    private string? errMessage;
+    protected override async Task OnInitializedAsync(){
+        authors = await Client.GetAuthorsAsync();
+    }
+    private async Task HandleAddAuthor(){
+        errMessage = await Client.AddAuthorAsync(newAuthorName);
+        if (errMessage is null){
+            authors = await Client.GetAuthorsAsync();
+            newAuthorName = "";
+        }
+    }
+}

@@ -23,7 +23,6 @@ public class AuthorClient
         if (!response.IsSuccessStatusCode)
             return await response.Content.ReadAsStringAsync();
         return null;
-
     }
 
 }

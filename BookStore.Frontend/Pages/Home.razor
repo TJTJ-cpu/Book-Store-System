@@ -2,6 +2,7 @@
 @using BookStore.Frontend.Dtos
 @using BookStore.Frontend.Clients
 @inject BookClient Clients
+@inject AuthorClient AuthorClients
 
 <PageTitle>My Book Store</PageTitle>
 
@@ -16,8 +17,14 @@
         <InputText @bind-Value="newBook.Name" />
     </div>
     <div>
-        <label>Author ID</label>
-        <InputNumber @bind-Value="newBook.AuthorId" />
+    <label>Author</label>
+    <InputSelect @bind-Value="newBook.AuthorId" class="form-control" style="width: 230px">
+        <option value="0">-- Select Author --</option>
+        @foreach (var author in authors ?? [])
+        {
+            <option value="@author.Id">@author.Name</option>
+        }
+    </InputSelect>
     </div>
     <div>
         <label>Price</label
@@ -73,12 +80,14 @@ else{
 }
 
 @code{
+    private AuthorDto []? authors;
     private BookSummaryDto[]? books;
     private CreateBookDto newBook = new(){ReleaseDate = new DateOnly(2000, 1, 1)};
     private string? errMessage;
 
     protected override async Task OnInitializedAsync(){
         books = await Clients.GetBooksAsync();
+        authors = await AuthorClients.GetAuthorsAsync();
     }
 
     private async Task HandleAddBook()
@@ -86,7 +95,8 @@ else{
         errMessage =  await Clients.AddBookAsync(newBook);
         if (errMessage is null){
             books = await Clients.GetBooksAsync();
-            newBook = new();
+            newBook = new(){ReleaseDate = new DateOnly(2000, 01, 01)};
+            @* newBook = new(); *@
         }
     }
 
